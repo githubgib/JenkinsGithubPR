@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+
+    <style>
+        /* ... existing styles ... */
+		
+		body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #result-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        #back-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #disease-info {
+            margin-top: 20px;
+            color: #555;
+        }
+		
+		#response-text {
+            background-color: purple; /* Set background color to purple */
+            color: white; /* Set text color to white */
+            padding: 15px; /* Add some padding for better spacing */
+            border-radius: 5px; /* Optional: Adds rounded corners */
+            margin: 10px 0; /* Optional: Adds margin above and below */
+        }
+		
+        #recommended-treatment-heading {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        #recommendation-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #008CBA; /* Blue */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #recommendation-response {
+            background-color: purple;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            min-height: 50px; /* Optional: to ensure minimum height */
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+	{% block title %}Result Page{% endblock %}
+
+	{% block content %}
+    <div id="result-container" style="background-color: lightblue;">
+        <h1>Poultry Disease Detection App</h1>
+        
+        <!-- Display the chart image -->
+        <img src="{{ url_for('static', filename='chart.png') }}?{{ timestamp }}" alt="Prediction Scores Chart">
+        
+        <!-- Display the disease info -->
+        <p id="disease-info">The longest bar in the graph is the detected disease.</p>
+
+        <!-- Button for Disease Recommendation -->
+        <button id="recommendation-button" onclick="getRecommendation()">Get Treatment Recommendation</button>
+
+        <!-- Section for displaying recommendation response -->
+        <div id="recommendation-response">
+            <!-- The recommendation text will be displayed here -->
+        </div>
+
+        <!-- Back button -->
+        <a href="{{ url_for('index') }}" id="back-button">Back to Upload Page</a>
+    </div>
+
+    <script>
+        function getRecommendation() {
+            var disease = document.getElementById('disease-info').innerText.split(': ')[1];
+
+            fetch('/get-recommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ disease: disease })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('recommendation-response').innerText = data.recommendation;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    {% endblock %}
+</body>
+</html>
