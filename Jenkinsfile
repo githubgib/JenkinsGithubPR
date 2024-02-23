@@ -1,65 +1,58 @@
 pipeline {
     agent any
-    
+
+    environment {
+        // Define any environment variables needed for your project
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the repository
+                // Checks out the source code for the Pull Request
                 checkout scm
             }
         }
-        
-        stage('Linting') {
+
+        stage('Setup Environment') {
             steps {
-                // Install dependencies if needed
-                sh 'pip install pylint'
-                
-                // Run linting checks
-                sh 'pylint *.py'
+                // Example: Install dependencies if needed, setup virtualenv, etc.
+                // Uncomment and adjust the next line according to your project's needs
+                // sh 'python -m venv venv && . venv/bin/activate && pip install -r requirements.txt'
+                echo 'Setup Environment.'
             }
         }
-        
-        stage('Build') {
+
+        stage('Lint') {
             steps {
-                // Add build steps here if needed
-                 echo 'Building..'
+                echo 'Running linting...'
+                // Run flake8 or your preferred linting tool
+                // This will fail the build if flake8 finds issues
+                sh 'flake8 .'
             }
         }
-        
+
         stage('Test') {
             steps {
-                // Add test steps here if needed
-                 echo 'Testing..'
+                echo 'Running tests...'
+                // Run your tests here
+                // Example for pytest
+                // sh 'pytest'
             }
         }
+
+        // Add more stages as needed (e.g., build, deploy)
     }
-    
+
     post {
         always {
-            // Clean up workspace
-            cleanWs()
+            // Clean up, send notifications, etc.
+            echo 'Build completed.'
         }
-        
         success {
-            // If linting and all other stages passed, set build status to success
-            echo 'Linting passed. Build successful.'
-            currentBuild.result = 'SUCCESS'
+            echo 'No issues detected.'
         }
-        
         failure {
-            // If any stage fails, set build status to failure
-            echo 'Linting failed. Build unsuccessful.'
-            currentBuild.result = 'FAILURE'
-        }
-        
-        changed {
-            // This block will run only for pull request events
-            
-            // Update the GitHub pull request status based on build result
-            script {
-                def pr = checkout([$class: 'GitHubPRPullRequest', apiUri: 'https://api.github.com', credentialsId: '0b155fa9-84e2-44af-9939-8dce3430c445', id: '1', number: 'CHANGE_ID'])
-                pr.createCommitStatus(state: currentBuild.result, context: 'Jenkins CI', description: "${currentBuild.result == 'SUCCESS' ? 'Linting passed. Build successful.' : 'Linting failed. Build unsuccessful.'}", targetUrl: env.BUILD_URL)
-            }
+            echo 'Issues detected. Please fix linting errors and push updates to the PR.'
         }
     }
 }
