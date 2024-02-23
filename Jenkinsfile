@@ -57,7 +57,7 @@ pipeline {
             
             // Update the GitHub pull request status based on build result
             script {
-                def pr = checkout([$class: 'GitHubPRPullRequest', apiUri: 'https://api.github.com', credentialsId: 'github-credentials', id: '1', number: 'CHANGE_ID'])
+                def pr = checkout([$class: 'GitHubPRPullRequest', apiUri: 'https://api.github.com', credentialsId: '1c7307d7-b51d-4b99-a172-125ce357dc4e', id: '1', number: 'CHANGE_ID'])
                 pr.createCommitStatus(state: currentBuild.result, context: 'Jenkins CI', description: "${currentBuild.result == 'SUCCESS' ? 'Linting passed. Build successful.' : 'Linting failed. Build unsuccessful.'}", targetUrl: env.BUILD_URL)
             }
         }
