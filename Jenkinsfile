@@ -22,14 +22,14 @@ pipeline {
         stage('Build') {
             steps {
                 // Add build steps here if needed
-                echo 'Building..'
+                 echo 'Building..'
             }
         }
         
         stage('Test') {
             steps {
                 // Add test steps here if needed
-                echo 'Testing..'
+                 echo 'Testing..'
             }
         }
     }
@@ -57,7 +57,7 @@ pipeline {
             
             // Update the GitHub pull request status based on build result
             script {
-                def pr = checkout([$class: 'GitHubPRPullRequest', apiUri: 'https://api.github.com', credentialsId: '1c7307d7-b51d-4b99-a172-125ce357dc4e', id: '1', number: 'CHANGE_ID'])
+                def pr = checkout([$class: 'GitHubPRPullRequest', apiUri: 'https://api.github.com', credentialsId: '0b155fa9-84e2-44af-9939-8dce3430c445', id: '1', number: 'CHANGE_ID'])
                 pr.createCommitStatus(state: currentBuild.result, context: 'Jenkins CI', description: "${currentBuild.result == 'SUCCESS' ? 'Linting passed. Build successful.' : 'Linting failed. Build unsuccessful.'}", targetUrl: env.BUILD_URL)
             }
         }
