@@ -12,6 +12,8 @@ pipeline {
         stage('Lint') {
             steps {
                 // Run linting with flake8
+                sh 'python3 -m ensurepip' // Ensure pip is installed
+                sh 'pip install --upgrade pip' // Upgrade pip to the latest version
                 sh 'pip install flake8'
                 script {
                     try {
