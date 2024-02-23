@@ -1,54 +1,40 @@
-    pipeline {
+pipeline {
     agent any
 
     stages {
         stage('Checkout') {
             steps {
+                // Checkout the PR code
                 checkout scm
             }
         }
 
-        stage('Setup Python Environment') {
-            steps {
-                //sh 'python3 -m venv venv'
-                //sh '. venv/bin/activate'
-                //sh 'python3 -m ensurepip' // Ensure pip is installed
-                //sh 'pip install --upgrade pip' // Upgrade pip to the latest version
-                sh 'pip install flake8'
-            }
-        }
-
-
         stage('Lint') {
             steps {
-                echo 'Running linting...'
-                sh 'flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics'
-                sh 'flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics'
-            }
-            post {
-                success {
-                    echo 'No linting errors found.'
-                }
-                failure {
-                    echo 'Linting errors detected.'
-                    script {
-                        currentBuild.result = 'FAILURE'
+                // Run linting with flake8
+                sh 'pip install flake8'
+                script {
+                    try {
+                        sh 'flake8 .'
+                    } catch (Exception e) {
+                        // If linting fails, mark this build as failed.
+                        error("Linting failed. Please fix linting errors before proceeding.")
                     }
                 }
             }
         }
+
+        // Additional stages like testing can be added here
     }
 
     post {
-        always {
-            echo 'Cleaning up...'
-            sh 'rm -rf venv'
-        }
         success {
-            echo 'Build was successful!'
+            // Actions to take if linting (and optionally tests) pass
+            echo 'Linting passed. PR can be considered for merging.'
         }
         failure {
-            echo 'Build failed. Check linting errors and try again.'
+            // Actions to take if linting fails
+            echo 'Linting failed. Please fix the issues.'
         }
     }
 }
