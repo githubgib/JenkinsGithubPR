@@ -1,58 +1,51 @@
 pipeline {
     agent any
 
-    environment {
-        // Define any environment variables needed for your project
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                // Checks out the source code for the Pull Request
                 checkout scm
             }
         }
 
-        stage('Setup Environment') {
+        stage('Setup Python Environment') {
             steps {
-                // Example: Install dependencies if needed, setup virtualenv, etc.
-                // Uncomment and adjust the next line according to your project's needs
-                // sh 'python -m venv venv && . venv/bin/activate && pip install -r requirements.txt'
-                echo 'Setup Environment.'
+                sh 'python -m venv venv'
+                sh '. venv/bin/activate'
+                sh 'pip install flake8'
             }
         }
 
         stage('Lint') {
             steps {
                 echo 'Running linting...'
-                // Run flake8 or your preferred linting tool
-                // This will fail the build if flake8 finds issues
-                sh 'flake8 .'
+                sh 'flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics'
+                sh 'flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics'
+            }
+            post {
+                success {
+                    echo 'No linting errors found.'
+                }
+                failure {
+                    echo 'Linting errors detected.'
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
             }
         }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Run your tests here
-                // Example for pytest
-                // sh 'pytest'
-            }
-        }
-
-        // Add more stages as needed (e.g., build, deploy)
     }
 
     post {
         always {
-            // Clean up, send notifications, etc.
-            echo 'Build completed.'
+            echo 'Cleaning up...'
+            sh 'rm -rf venv'
         }
         success {
-            echo 'No issues detected.'
+            echo 'Build was successful!'
         }
         failure {
-            echo 'Issues detected. Please fix linting errors and push updates to the PR.'
+            echo 'Build failed. Check linting errors and try again.'
         }
     }
 }
