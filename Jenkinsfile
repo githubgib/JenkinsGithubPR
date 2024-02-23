@@ -22,12 +22,14 @@ pipeline {
         stage('Build') {
             steps {
                 // Add build steps here if needed
+                echo 'Building..'
             }
         }
         
         stage('Test') {
             steps {
                 // Add test steps here if needed
+                echo 'Testing..'
             }
         }
     }
