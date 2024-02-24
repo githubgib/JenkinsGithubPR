@@ -12,6 +12,8 @@ pipeline {
             steps {
                 sh 'python3 -m venv venv'
                 sh '. venv/bin/activate'
+                sh 'python3 -m ensurepip' // Ensure pip is installed
+                sh 'pip install --upgrade pip' // Upgrade pip to the latest version
                 sh 'pip install flake8'
             }
         }
