@@ -5,11 +5,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from your repository
-                git 'https://github.com/githubgib/JenkinsGithubPR.gitt'
+                git 'https://github.com/yourusername/yourrepository.git'
             }
         }
         
-
         stage('Linting') {
             steps {
                 // Install dependencies and run linting
@@ -18,13 +17,11 @@ pipeline {
                 sh 'find . -name "*.py" | xargs pylint' // Run linting on all Python files in the project
             }
         }
-
         
         stage('Build') {
             steps {
                 // Build your Python project (if needed)
                 // You can add your build commands here
-                echo 'Building..'
             }
         }
         
@@ -32,7 +29,6 @@ pipeline {
             steps {
                 // Run tests (if needed)
                 // You can add your test commands here
-                echo 'test..'
             }
         }
         
@@ -40,7 +36,6 @@ pipeline {
             steps {
                 // Publish artifacts or deploy your project (if needed)
                 // You can add your publish/deploy commands here
-                echo 'deploy..'
             }
         }
     }
