@@ -1,42 +1,63 @@
 pipeline {
     agent any
-
+    
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the PR code
-                checkout scm
+                // Checkout the code from your repository
+                git 'https://github.com/yourusername/yourrepository.git'
+            }
+        }
+        
+
+        stage('Linting') {
+            steps {
+                // Install dependencies and run linting
+                sh 'pip install -r requirements.txt' // If you have requirements file
+                sh 'pip install pylint' // Install pylint or any linting tool you are using
+                sh 'find . -name "*.py" | xargs pylint' // Run linting on all Python files in the project
             }
         }
 
-        stage('Lint') {
+        
+        stage('Build') {
             steps {
-                // Run linting with flake8
-                sh 'python3 -m ensurepip' // Ensure pip is installed
-                sh 'pip install --upgrade pip' // Upgrade pip to the latest version
-                sh 'pip install flake8'
-                script {
-                    try {
-                        sh 'flake8 .'
-                    } catch (Exception e) {
-                        // If linting fails, mark this build as failed.
-                        error("Linting failed. Please fix linting errors before proceeding.")
-                    }
+                // Build your Python project (if needed)
+                // You can add your build commands here
+                echo 'Building..'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                // Run tests (if needed)
+                // You can add your test commands here
+                echo 'test..'
+            }
+        }
+        
+        stage('Publish') {
+            steps {
+                // Publish artifacts or deploy your project (if needed)
+                // You can add your publish/deploy commands here
+                echo 'deploy..'
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Post-build action to check linting results and reject PR if linting fails
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                // Check linting results and determine whether to fail the build
+                // For example, you can parse the output of the linting tool to see if there are any errors/warnings
+                
+                // If linting fails, reject the PR
+                if (/* logic to determine if linting fails */) {
+                    currentBuild.result = 'FAILURE'
+                    error 'Linting failed, please fix the linting issues before merging.'
                 }
             }
-        }
-
-        // Additional stages like testing can be added here
-    }
-
-    post {
-        success {
-            // Actions to take if linting (and optionally tests) pass
-            echo 'Linting passed. PR can be considered for merging.'
-        }
-        failure {
-            // Actions to take if linting fails
-            echo 'Linting failed. Please fix the issues.'
         }
     }
 }
