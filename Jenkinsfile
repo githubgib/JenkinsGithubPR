@@ -1,58 +1,51 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from your repository
-                git 'https://github.com/yourusername/yourrepository.git'
+                checkout scm
             }
         }
-        
-        stage('Linting') {
+
+        stage('Setup Python Environment') {
             steps {
-                // Install dependencies and run linting
-                sh 'pip install -r requirements.txt' // If you have requirements file
-                sh 'pip install pylint' // Install pylint or any linting tool you are using
-                sh 'find . -name "*.py" | xargs pylint' // Run linting on all Python files in the project
+                sh 'python3 -m venv venv'
+                sh '. venv/bin/activate'
+                sh 'pip install flake8'
             }
         }
-        
-        stage('Build') {
+
+        stage('Lint') {
             steps {
-                // Build your Python project (if needed)
-                // You can add your build commands here
+                echo 'Running linting...'
+                sh 'flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics'
+                sh 'flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics'
             }
-        }
-        
-        stage('Test') {
-            steps {
-                // Run tests (if needed)
-                // You can add your test commands here
-            }
-        }
-        
-        stage('Publish') {
-            steps {
-                // Publish artifacts or deploy your project (if needed)
-                // You can add your publish/deploy commands here
+            post {
+                success {
+                    echo 'No linting errors found.'
+                }
+                failure {
+                    echo 'Linting errors detected.'
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
             }
         }
     }
-    
+
     post {
         always {
-            // Post-build action to check linting results and reject PR if linting fails
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                // Check linting results and determine whether to fail the build
-                // For example, you can parse the output of the linting tool to see if there are any errors/warnings
-                
-                // If linting fails, reject the PR
-                if (/* logic to determine if linting fails */) {
-                    currentBuild.result = 'FAILURE'
-                    error 'Linting failed, please fix the linting issues before merging.'
-                }
-            }
+            echo 'Cleaning up...'
+            sh 'rm -rf venv'
+        }
+        success {
+            echo 'Build was successful!'
+        }
+        failure {
+            echo 'Build failed. Check linting errors and try again.'
         }
     }
 }
