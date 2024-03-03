@@ -3,32 +3,31 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/githubgib/JenkinsGithubPR.git'
             }
         }
-        stage('Install dependencies') {
-            steps {
-                script {
-                    docker.image('python:3.8').inside {
-                        sh 'pip install -r requirements.txt'
-                    }
+        stage('Lint Check') {
+            agent {
+                docker {
+                    image 'python:3.8-slim'
+                    args '-v $PWD:/app'
                 }
             }
-        }
-        stage('Lint') {
             steps {
-                script {
-                    docker.image('python:3.8').inside {
-                        sh 'pip install flake8'
-                        sh 'flake8 .'
-                    }
-                }
+                sh '''
+                pip install -r requirements.txt
+                pylint myapp
+                '''
             }
         }
     }
     post {
+        success {
+            echo 'Lint checks passed.'
+        }
         failure {
-            // Actions to perform on failure, e.g., notify someone.
+            echo 'Lint checks failed. Fix the issues and try again.'
+            // Here you can add steps like sending notifications, etc.
         }
     }
 }
