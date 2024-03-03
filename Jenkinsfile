@@ -1,17 +1,34 @@
 pipeline {
     agent any
-
-    tools {
-        // Use the name you specified in the Global Tool Configuration
-        'jenkins.plugins.shiningpanda.tools.PythonInstallation' 'Python3'
-
-    }
-
     stages {
-        stage('Check Python Version') {
+        stage('Checkout') {
             steps {
-                sh 'python --version'
+                checkout scm
             }
+        }
+        stage('Install dependencies') {
+            steps {
+                script {
+                    docker.image('python:3.8').inside {
+                        sh 'pip install -r requirements.txt'
+                    }
+                }
+            }
+        }
+        stage('Lint') {
+            steps {
+                script {
+                    docker.image('python:3.8').inside {
+                        sh 'pip install flake8'
+                        sh 'flake8 .'
+                    }
+                }
+            }
+        }
+    }
+    post {
+        failure {
+            // Actions to perform on failure, e.g., notify someone.
         }
     }
 }
