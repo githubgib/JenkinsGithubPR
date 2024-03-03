@@ -3,7 +3,8 @@ pipeline {
 
     tools {
         // Use the name you specified in the Global Tool Configuration
-        python 'Python3'
+        'jenkins.plugins.shiningpanda.tools.PythonInstallation' 'Python3'
+
     }
 
     stages {
