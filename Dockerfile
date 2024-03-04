@@ -1,18 +1,17 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+# Use the official Python image as base
+FROM python:3
 
-# Set the working directory in the container
+# Install flake8
+RUN pip install flake8
+
+# Set up a working directory (optional)
 WORKDIR /app
 
-# Install any needed packages specified in requirements.txt
-COPY requirements.txt /app/
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+# Copy your Jenkinsfile or any other necessary files
+COPY Jenkinsfile /app
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# If you have other dependencies, you can copy and install them as well
+# COPY requirements.txt /app
+# RUN pip install -r requirements.txt
 
-# Define environment variable
-ENV NAME World
-
-# Run app.py when the container launches
-CMD ["python", "app.py"]
+# Specify any additional configurations or commands here as needed
