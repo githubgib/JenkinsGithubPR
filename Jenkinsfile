@@ -18,7 +18,7 @@ pipeline {
                 script { 
                     // Build Docker image using the provided Dockerfile, assuming Dockerfile is in the root directory
                     // and assigning a dynamic tag to the built image.
-                    def dockerImage = docker.build('Dockerfile')
+                    def dockerImage = docker.build('your-docker-image-name:latest')
                 }
             }
         }
