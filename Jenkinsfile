@@ -1,21 +1,24 @@
-        pipeline {
-    agent {
-        docker {
-            // Use the name of your Docker image
-            image 'your-docker-image-name'
-            // Specify other Docker options as needed
-            // For example, you may want to mount volumes or use a specific label
-            args '-v /path/to/host/dir:/path/in/container'
-        }
+pipeline {
+    agent any
+    
+    environment {
+        dockerImage = 'your-docker-image-name:latest' // Provide a valid Docker image name
     }
+
     stages {
-        stage('Lint') {
+        stage('Checkout') {
             steps {
-                // Run flake8 linting
-                sh 'flake8 .'
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/githubgib/JenkinsGithubPR.git']])
             }
         }
-        // Add more stages as needed
+        
+        stage('Build Docker Image') {
+            steps {
+                script { 
+                    // Build Docker image using the provided Dockerfile
+                    dockerImage = docker.build('-f Dockerfile .') // Assuming Dockerfile is in the root directory
+                }
+            }
+        }
     }
-    // Add post-build actions, notifications, etc.
 }
