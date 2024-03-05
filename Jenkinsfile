@@ -1,8 +1,8 @@
 pipeline {
     agent any
-    
+
     environment {
-        dockerImage = 'your-docker-image-name:latest' // Provide a valid Docker image name
+        // Static environment variable, if needed
     }
 
     stages {
@@ -15,8 +15,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script { 
-                    // Build Docker image using the provided Dockerfile
-                    dockerImage = docker.build('-f Dockerfile .') // Assuming Dockerfile is in the root directory
+                    // Build Docker image using the provided Dockerfile, assuming Dockerfile is in the root directory
+                    // and assigning a dynamic tag to the built image.
+                    def dockerImage = docker.build('your-docker-image-name:latest')
                 }
             }
         }
