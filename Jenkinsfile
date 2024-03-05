@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         // Static environment variable, if needed
+        dockerImage2 = ''
     }
 
     stages {
