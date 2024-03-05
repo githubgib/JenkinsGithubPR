@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        // Static environment variable, if needed
-        dockerImage2 = ''
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -15,10 +10,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
+                script { 
                     // Build Docker image using the provided Dockerfile, assuming Dockerfile is in the root directory
-                    // and assigning a dynamic tag to the built image.
-                    def dockerImage = docker.build('your-docker-image-name:latest')
+                    // and assigning a dynamic tag to the built image. The image name is stored in a script-level variable.
+                    dockerImage = docker.build('your-docker-image-name:latest')
                 }
             }
         }
@@ -26,15 +21,13 @@ pipeline {
         stage('Lint Code') {
             steps {
                 script {
-                    // Run flake8 to check Python code for linting errors
-                    // Assuming your code is mounted or copied into /app within the Docker container
+                    // Assuming 'dockerImage' is the name of the Docker image variable from the previous stage
+                    // Run 'flake8' command within the Docker container
                     dockerImage.inside {
-                        sh 'flake8 /app'
+                        sh 'flake8 .'
                     }
                 }
             }
         }
-
-        // Add other stages as necessary
     }
 }
