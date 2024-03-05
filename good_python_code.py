@@ -12,5 +12,5 @@ def another_function():
         print("X is one")
     
     my_list = [1, 2, 3]  # Avoids shadowing built-in names
-    for item in my_list:  # More Pythonic looping
+    for item in my_list:  # More Pythonic looping good
         print(item)
