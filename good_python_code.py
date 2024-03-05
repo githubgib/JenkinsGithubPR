@@ -11,6 +11,6 @@ def another_function():
     if x:
         print("X is one")
     
-    my_list = [1, 2, 3]  # Avoids shadowing built-in names This a good job
+    my_list = [1, 2, 3]  # Avoids shadowing built-in names This a good job. Thank you for this
     for item in my_list:  # More Pythonic looping good code
         print(item)
