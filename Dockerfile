@@ -11,7 +11,8 @@ RUN pip install --upgrade flake8
 WORKDIR /app
 
 # Copy your project files into the Docker image
-COPY . /app
+# COPY . /app
+COPY * /app/
 
 # Add the Python and pip executable paths to the PATH
 ENV PATH="/usr/local/bin:/usr/bin:${PATH}"
