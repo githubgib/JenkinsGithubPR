@@ -36,12 +36,11 @@ pipeline {
         stage('Lint Code2') {
             steps {
                 script {
-                    // This command will fail the pipeline if flake8 finds linting issues
-                    def result = sh(script: 'flake8 .', returnStatus: true)
-                    if (result != 0) {
-                        error("Linting issues found")
-                    }
-                }
+                    // Runs 'flake8' command with the full path within the Docker container
+                    dockerImage.inside {
+                        sh '/usr/local/bin/flake8 .'
+                     }
+              }
             }
         }
 
