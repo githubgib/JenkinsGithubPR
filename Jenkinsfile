@@ -24,10 +24,12 @@ pipeline {
                     // Assuming 'dockerImage' is the name of the Docker image variable from the previous stage
                     // Run 'flake8' command within the Docker container
                     dockerImage.inside {
-                        sh 'flake8 .'
+                        sh 'flake8 . || exit 1'
                     }
                 }
             }
         }
+
+        
     }
 }
