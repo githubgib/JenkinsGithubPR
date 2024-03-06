@@ -25,6 +25,9 @@ pipeline {
                     // Run 'flake8' command within the Docker container
                     dockerImage.inside {
                         sh 'flake8 . || exit 1'
+                        sh 'flake8 --version'
+                        sh 'ls -la'
+
                     }
                 }
             }
