@@ -1,7 +1,7 @@
 import os
 
 def some_function(): 
-    """A good practice function that does something."""
+    """A good practice function that does something here."""
     # Corrected by moving the import to the top and using a function call that's considered safe.
     print(os.listdir('.'))
 
