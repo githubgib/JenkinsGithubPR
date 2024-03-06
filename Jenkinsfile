@@ -38,8 +38,10 @@ pipeline {
                 script {
                     // Runs 'flake8' command with the full path within the Docker container
                     dockerImage.inside {
-                        //sh '/usr/local/bin/flake8 .'
-                        sh '/usr/local/bin/flake8 Bad_python_code.py'
+                        sh '/usr/local/bin/flake8 .'
+                        sh 'flake8 --version'
+                        sh 'ls -la'
+                        //sh '/usr/local/bin/flake8 Bad_python_code.py'
                      }
               }
             }
