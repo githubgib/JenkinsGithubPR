@@ -12,9 +12,12 @@ WORKDIR /app
 
 # Copy your project files into the Docker image
 # COPY . /app
-COPY . /tmp/
-RUN mv /tmp/* /app/ && rm -r /tmp/
-# COPY * /app/
+
+# Copy all files, including Python files, into the Docker image
+COPY . .
+
+# Ensure that all files are copied
+RUN find . -type f -exec ls -l {} \;
 
 # Add the Python and pip executable paths to the PATH
 ENV PATH="/usr/local/bin:/usr/bin:${PATH}"
