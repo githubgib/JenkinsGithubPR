@@ -39,6 +39,7 @@ pipeline {
                     // Runs 'flake8' command with the full path within the Docker container
                     dockerImage.inside {
                         sh '/usr/local/bin/flake8 .'
+                        sh '/usr/local/bin/flake8 Py_subdirectory/'
                      }
               }
             }
