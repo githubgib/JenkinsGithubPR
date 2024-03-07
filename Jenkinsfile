@@ -23,6 +23,28 @@ pipeline {
                 }
             }
         }
+        stage('Lint Code3') {
+            steps {
+                script {
+                    dockerImage.inside {
+                        sh '/usr/local/bin/pylint **/*.py || exit 1'
+                    }
+                }
+            }
+        }
+
+        stage('Debug Environment') {
+            steps {
+                script {
+                    dockerImage.inside {
+                        sh 'pip list' // List installed Python packages
+                        sh 'which pylint || echo pylint not found'
+                        sh 'pylint --version || echo pylint version command failed'
+                    }
+                }
+            }
+        }
+
 
         stage('Lint Code') {
             steps {
