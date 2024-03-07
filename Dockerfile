@@ -4,6 +4,9 @@ FROM python:3
 # Install PyLint
 RUN pip install pylint
 
+# Verify PyLint installation
+RUN pylint --version
+
 # Set up a working directory
 WORKDIR /app
 
