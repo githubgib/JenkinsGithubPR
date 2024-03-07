@@ -8,6 +8,15 @@ pipeline {
             }
         }
 
+        stage('Verify Python Files') {
+            steps {
+                script {
+                    sh 'ls -la *.py'
+                }
+            }
+        }
+
+
         stage('Build Docker Image') {
             steps {
                 script { 
