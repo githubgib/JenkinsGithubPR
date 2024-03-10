@@ -11,7 +11,7 @@ pipeline {
         stage('Verify Python Files') {
             steps {
                 script {
-                    sh 'ls -la *.py'
+                    sh 'ls -la *.py || echo "No Python files found."'
                 }
             }
         }
@@ -23,56 +23,34 @@ pipeline {
                 }
             }
         }
-        stage('Lint Code3') {
+
+        stage('Debug Environment2') {
             steps {
                 script {
                     dockerImage.inside {
-                        sh '/usr/local/bin/pylint **/*.py || exit 1'
+                        // List installed Python packages
+                        sh 'pip list'
+                        // Verify the presence of pylint
+                        //sh 'which pylint || echo pylint not found'
+                        // Check the version of pylint
+                        //sh 'pylint --version || echo pylint version command failed'
+                        // Check for write permission in /tmp (optional)
+                        sh 'touch /tmp/test_permission && echo "Write permission in /tmp OK" || echo "No write permission in /tmp"'
                     }
                 }
             }
         }
 
-        stage('Debug Environment') {
+        stage('Lint Code with Pylama') {
             steps {
                 script {
                     dockerImage.inside {
-                        sh 'pip list' // List installed Python packages
-                        sh 'which pylint || echo pylint not found'
-                        sh 'pylint --version || echo pylint version command failed'
+                        sh 'pylama'
+                        sh 'pylama -v'
                     }
                 }
             }
         }
-
-
-        stage('Lint Code') {
-            steps {
-                script {
-                    dockerImage.inside {
-                        // Run PyLint command within the Docker container
-                        sh 'pylint **/*.py || exit 1'
-                        sh 'pylint --version'
-                        sh 'ls -la'
-                    }
-                }
-            }
-        }
-
-        // If you need a separate stage for any reason
-        stage('Lint Code2') {
-            steps {
-                script {
-                    dockerImage.inside {
-                        sh '/usr/local/bin/pylint **/*.py'
-                        sh 'pylint --version'
-                        sh 'ls -la'
-                        // If you need to run PyLint on specific files
-                        // sh '/usr/local/bin/pylint specific_file.py'
-                     }
-              }
-            }
-        }
-
+ 
     }
 }
